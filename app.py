@@ -1,6 +1,6 @@
 import pickle
 import os
-from flask import Flask, request, app,jsonify,url_for,render_template
+from flask import Flask, render_template_string, request, app,jsonify,url_for,render_template
 
 import numpy as np
 import pandas as pd
@@ -23,6 +23,15 @@ def predict_api():
     output = regmodel.predict(new_data)
     print(output[0])
     return jsonify(output[0])
+
+@app.route('/predict',methods=['POST'])
+def predict():
+    data=[float(x) for x in request.form.values()]
+    final_input = scalar.transform(np.array(data).reshape(1,-1))
+    print(final_input)
+    output= regmodel.predict(final_input)[0]
+    return render_template("home.html", prediction_text="House Prediction House Price prediction is:{}".format(output))
+
 
 if __name__ =='__main__':
     app.run(debug=True)
